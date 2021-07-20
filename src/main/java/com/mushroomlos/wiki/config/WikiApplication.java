@@ -1,12 +1,15 @@
-package com.mushroomlos.wiki;
+package com.mushroomlos.wiki.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
-
+// ComponentScan支持扫描多个包
+// @ComponentScan({"com.mushroomlos", "com.text"})
+@ComponentScan("com.mushroomlos")
 @SpringBootApplication
 public class WikiApplication {
 
