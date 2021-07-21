@@ -1,6 +1,7 @@
 package com.mushroomlos.wiki.controller;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,10 @@ RestController = Controller注解 + ResponseBody注解
 //@Controller
 @RestController
 public class TestController {
+    // 优先读取配置文件，然后再读取默认值
+//    @Value("${test.hello:HELLO}")
+    @Value("${test.hello}")
+    private String testHello;
 
     /**
      * GET, POST, PUT, DELETE
@@ -31,7 +36,7 @@ public class TestController {
     // 405请求不支持，直接读取页面为GET请求
     @GetMapping("/hello")
     public String hello(){
-        return "Hello World";
+        return "Hello World" + testHello;
     }
 
     @PostMapping("/hello/post")
