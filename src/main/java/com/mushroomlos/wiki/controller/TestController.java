@@ -1,8 +1,9 @@
 package com.mushroomlos.wiki.controller;
 
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /*
 RestController返回字符串
@@ -30,6 +31,11 @@ public class TestController {
     // 405请求不支持，直接读取页面为GET请求
     @GetMapping("/hello")
     public String hello(){
-        return "Hello world";
+        return "Hello World";
+    }
+
+    @PostMapping("/hello/post")
+    public String helloPost(String name){
+        return "Hello world post " + name;
     }
 }
