@@ -1,5 +1,6 @@
 package com.mushroomlos.wiki.config;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -10,6 +11,7 @@ import org.springframework.core.env.Environment;
 // ComponentScan支持扫描多个包
 // @ComponentScan({"com.mushroomlos", "com.text"})
 @ComponentScan("com.mushroomlos")
+@MapperScan("com.mushroomlos.wiki.mapper")
 @SpringBootApplication
 public class WikiApplication {
 
