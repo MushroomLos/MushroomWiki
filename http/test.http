@@ -22,4 +22,4 @@ GET http://localhost:8880/hello
 
 ###
 
-#GET http://localhost:8880/test/list
+GET http://localhost:8880/test/list
