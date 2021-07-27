@@ -56,13 +56,13 @@
         },
         {
           title: 'Category_1',
-          key: 'category1_id',
-          dataIndex: 'category1_id'
+          key: 'category1Id',
+          dataIndex: 'category1Id'
         },
         {
           title: 'Category_2',
-          key: 'category2_id',
-          dataIndex: 'category2_id'
+          key: 'category2Id',
+          dataIndex: 'category2Id'
         },
         {
           title: 'Doc',

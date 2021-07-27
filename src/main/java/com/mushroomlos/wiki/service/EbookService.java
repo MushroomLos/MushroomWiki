@@ -7,6 +7,7 @@ import com.mushroomlos.wiki.domain.EbookExample;
 import com.mushroomlos.wiki.mapper.EbookMapper;
 import com.mushroomlos.wiki.req.EbookReq;
 import com.mushroomlos.wiki.resp.EbookResp;
+import com.mushroomlos.wiki.resp.PageResp;
 import com.mushroomlos.wiki.util.CopyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list(EbookReq req) {
+    public PageResp<EbookResp> list(EbookReq req) {
 
         EbookExample ebookExample = new EbookExample();
         // Criteria类似于where条件
@@ -32,7 +33,7 @@ public class EbookService {
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
@@ -51,6 +52,10 @@ public class EbookService {
 
         List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
 
-        return list;
+        PageResp<EbookResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+
+        return pageResp;
     }
 }

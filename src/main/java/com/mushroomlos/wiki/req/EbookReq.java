@@ -1,6 +1,6 @@
 package com.mushroomlos.wiki.req;
 
-public class EbookReq {
+public class EbookReq extends PageReq{
     private Long id;
 
     private String name;
@@ -23,13 +23,9 @@ public class EbookReq {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
-        sb.append("]");
-        return sb.toString();
+        return "EbookReq{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
