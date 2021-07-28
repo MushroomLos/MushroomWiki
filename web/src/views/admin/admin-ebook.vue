@@ -3,6 +3,11 @@
     <a-layout-content
             :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
+      <p>
+        <a-button type="primary" @click="add()" size="large">
+          新增
+        </a-button>
+      </p>
       <a-table
         :columns="columns"
         :row-key="record => record.id"
@@ -19,7 +24,7 @@
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
-            <a-button type="danger">
+            <a-button type="danger" @click="handleDelete(record.id)">
               删除
             </a-button>
           </a-space>
@@ -47,7 +52,7 @@
       <a-form-item label="Category2">
         <a-input v-model:value="ebook.category2Id"/>
       </a-form-item>
-      <a-form-item label="Cover">
+      <a-form-item label="Description">
         <a-input v-model:value="ebook.desc" type="text"/>
       </a-form-item>
     </a-form>
@@ -100,6 +105,10 @@
         {
           title: 'Vote',
           dataIndex: 'vote_count'
+        },
+        {
+          title: 'Description',
+          dataIndex: 'desc'
         },
         {
           title: 'Action',
@@ -169,6 +178,30 @@
         ebook.value = record;
       };
 
+      /**
+       * 新增
+       */
+      const add = () =>{
+        modalVisible.value = true;
+        ebook.value = {};
+      };
+
+      /**
+       * 删除
+       */
+      const handleDelete = (id: number) =>{
+        axios.delete("/ebook/delete/" + id).then((response) =>{
+          const data = response.data; // data = commonResp
+          if(data.success){
+            // reloading
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize,
+            });
+          }
+        });
+      };
+
       onMounted(() => {
         handleQuery({
           page: 1,
@@ -184,6 +217,8 @@
         handleTableChange,
 
         edit,
+        add,
+        handleDelete,
 
         ebook,
         modalVisible,
