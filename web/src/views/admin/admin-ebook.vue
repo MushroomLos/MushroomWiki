@@ -238,12 +238,18 @@
           loading.value = false;
           const data = response.data;
           if(data.success){
-            categorys = data.content
+            categorys = data.content;
             console.log("原始数据:", categorys);
 
             level1.value = [];
             level1.value = Tool.array2Tree(categorys, 0);
             console.log("树型结构:", level1);
+
+            // 加载完分类后，再加载电子书，避免渲染报错
+            handleQuery({
+              page: 1,
+              size: pagination.value.pageSize,
+            });
           }else{
             message.error(data.message);
           }
@@ -262,10 +268,6 @@
 
       onMounted(() => {
         handleQueryCategory();
-        handleQuery({
-          page: 1,
-          size: pagination.value.pageSize,
-        });
       });
 
       return{
