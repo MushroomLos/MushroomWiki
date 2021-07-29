@@ -20,7 +20,7 @@
       <a-table
         :columns="columns"
         :row-key="record => record.id"
-        :data-source="categorys"
+        :data-source="level1"
         :loading="loading"
         :pagination="false"
       >
@@ -98,7 +98,19 @@
 
       /**
        * Data querying
+       * 一级分类树，children属性是二级分类树
+       * [{
+       *     id: "",
+       *     name: "",
+       *     children: [{
+       *         id: "",
+       *         name: ""
+       *     }]
+       * }]
        */
+
+      const level1 = ref();
+
       const handleQuery = () => {
         loading.value = true;
         axios.get("/category/all",).then((response) =>{
@@ -106,6 +118,11 @@
           const data = response.data;
           if(data.success){
             categorys.value = data.content;
+            console.log("原始数据:", categorys.value);
+
+            level1.value = [];
+            level1.value = Tool.array2Tree(categorys.value, 0);
+            console.log("树型结构:", level1);
           }else{
             message.error(data.message);
           }
@@ -169,7 +186,8 @@
 
       return{
         param,
-        categorys,
+        // categorys,
+        level1,
         columns,
         loading,
         handleQuery,
