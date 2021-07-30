@@ -95,7 +95,7 @@ public class DocService {
         docMapper.deleteByPrimaryKey(id);
     }
 
-    public void delete(List<String> ids){
+    public void delete(List<String> ids) {
         DocExample docExample = new DocExample();
         DocExample.Criteria criteria = docExample.createCriteria();
         criteria.andIdIn(ids);

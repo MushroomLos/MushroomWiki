@@ -46,7 +46,7 @@ public class DocController {
     }
 
     @DeleteMapping("/delete/{idsStr}")
-    public CommonResp delete(@PathVariable String idsStr){
+    public CommonResp delete(@PathVariable String idsStr) {
         CommonResp resp = new CommonResp<>();
         List<String> list = Arrays.asList(idsStr.split(","));
         docService.delete(list);

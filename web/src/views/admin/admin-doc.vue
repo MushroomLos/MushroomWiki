@@ -3,81 +3,87 @@
     <a-layout-content
             :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <p>
-        <a-form layout="inline" :model="param">
-          <a-form-item>
-            <a-button type="primary" @click="handleQuery()">
-              查询
-            </a-button>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" @click="add()">
-              新增
-            </a-button>
-          </a-form-item>
-        </a-form>
-      </p>
-      <a-table
-        :columns="columns"
-        :row-key="record => record.id"
-        :data-source="level1"
-        :loading="loading"
-        :pagination="false"
-      >
-        <template #cover="{text:cover}">
-          <img v-if="cover" :src="cover" alt="avatar" />
-        </template>
-        <template v-slot:action="{ text, record }">
-          <a-space size="small">
-            <a-button type="primary" @click="edit(record)">
-              编辑
-            </a-button>
-            <a-popconfirm
-                    title="删除后不可恢复，确认删除?"
-                    ok-text="是"
-                    cancel-text="否"
-                    @confirm="handleDelete(record.id)"
-            >
-              <a-button type="danger">
-                删除
-              </a-button>
-            </a-popconfirm>
-          </a-space>
-        </template>
-      </a-table>
+      <a-row>
+        <a-col :span="8">
+          <p>
+            <a-form layout="inline" :model="param">
+              <a-form-item>
+                <a-button type="primary" @click="handleQuery()">
+                  查询
+                </a-button>
+              </a-form-item>
+              <a-form-item>
+                <a-button type="primary" @click="add()">
+                  新增
+                </a-button>
+              </a-form-item>
+            </a-form>
+          </p>
+          <a-table
+                  :columns="columns"
+                  :row-key="record => record.id"
+                  :data-source="level1"
+                  :loading="loading"
+                  :pagination="false"
+          >
+            <template #cover="{text:cover}">
+              <img v-if="cover" :src="cover" alt="avatar" />
+            </template>
+            <template v-slot:action="{ text, record }">
+              <a-space size="small">
+                <a-button type="primary" @click="edit(record)">
+                  编辑
+                </a-button>
+                <a-popconfirm
+                        title="删除后不可恢复，确认删除?"
+                        ok-text="是"
+                        cancel-text="否"
+                        @confirm="handleDelete(record.id)"
+                >
+                  <a-button type="danger">
+                    删除
+                  </a-button>
+                </a-popconfirm>
+              </a-space>
+            </template>
+          </a-table>
+        </a-col>
+        <a-col :span="16">
+          <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+            <a-form-item label="名称">
+              <a-input v-model:value="doc.name"/>
+            </a-form-item>
+            <a-form-item label="父文档">
+              <a-tree-select
+                      v-model:value="doc.parent"
+                      style="width: 100%"
+                      :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                      :tree-data="treeSelectData"
+                      placeholder="请选择父文档"
+                      tree-default-expand-all
+                      :replaceFields="{title: 'name', key: 'id', value:'id'}"
+              >
+              </a-tree-select>
+            </a-form-item>
+            <a-form-item label="顺序">
+              <a-input v-model:value="doc.sort"/>
+            </a-form-item>
+            <a-form-item label="内容">
+              <div id="content"></div>
+            </a-form-item>
+          </a-form>
+        </a-col>
+      </a-row>
     </a-layout-content>
   </a-layout>
 
-  <a-modal
-          title="文档表单"
-          v-model:visible="modalVisible"
-          :confirm-loading="modalLoading"
-          @ok="handleModalOk"
-  >
-    <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-      <a-form-item label="名称">
-          <a-input v-model:value="doc.name"/>
-      </a-form-item>
-        <a-form-item label="父文档">
-            <a-tree-select
-                    v-model:value="doc.parent"
-                    style="width: 100%"
-                    :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                    :tree-data="treeSelectData"
-                    placeholder="请选择父文档"
-                    tree-default-expand-all
-                    :replaceFields="{title: 'name', key: 'id', value:'id'}"
-            >
-            </a-tree-select>
-        </a-form-item>
-      <a-form-item label="顺序">
-        <a-input v-model:value="doc.sort"/>
-      </a-form-item>
-      <a-form-item label="内容">
-        <div id="content"></div>
-      </a-form-item>
-    </a-form>
-  </a-modal>
+<!--  <a-modal-->
+<!--          title="文档表单"-->
+<!--          v-model:visible="modalVisible"-->
+<!--          :confirm-loading="modalLoading"-->
+<!--          @ok="handleModalOk"-->
+<!--  >-->
+<!--  </a-modal>-->
 </template>
 
 <script lang="ts">
@@ -213,13 +219,13 @@
       /**
        * 获取删除列表，查找整个树枝
        */
-      const getDeleteIds = (treeSelectData: any, id: any) =>{
+      const getDeleteIds = (treeSelectData: any, id: any) => {
         // console.log(treeSelectData, id);
-        // 遍历数组
-        for(let i = 0; i < treeSelectData.length; i++){
+        // 遍历数组，即遍历某一层节点
+        for (let i = 0; i < treeSelectData.length; i++) {
           const node = treeSelectData[i];
-          if(node.id == id){
-            // 如果当前为目标
+          if (node.id === id) {
+            // 如果当前节点就是目标节点
             console.log("delete", node);
             // 将目标ID放入结果集ids
             // node.disabled = true;
@@ -228,60 +234,64 @@
 
             // 遍历所有子节点
             const children = node.children;
-            if(Tool.isNotEmpty(children)){
-              for(let j = 0; j < children.length; j++){
-                getDeleteIds(children, children[j].id);
+            if (Tool.isNotEmpty(children)) {
+              for (let j = 0; j < children.length; j++) {
+                getDeleteIds(children, children[j].id)
               }
-            }else{
-              // 如果当前节点不是子节点，去其他节点
-              const children = node.children;
-              if(Tool.isNotEmpty(children)) {
-                setDisable(children, id);
-              }
+            }
+          } else {
+            // 如果当前节点不是目标节点，则到其子节点再找找看。
+            const children = node.children;
+            if (Tool.isNotEmpty(children)) {
+              getDeleteIds(children, id);
             }
           }
         }
-      }
+      };
 
       /**
        * 编辑
        */
-      const edit = (record: any) =>{
+      const edit = (record: any) => {
         modalVisible.value = true;
         doc.value = Tool.copy(record);
 
-        // 不能选择当前节点及其所有子节点作为父节点，会使其断开
+        // 不能选择当前节点及其所有子孙节点，作为父节点，会使树断开
         treeSelectData.value = Tool.copy(level1.value);
         setDisable(treeSelectData.value, record.id);
 
-        // 为选择树添加一个“无”
-        treeSelectData.value.unshift({id: 0, name: '无'});
-        setTimeout(function(){
-          editor.create();
-        }, 100);
-      }
-
-      /**
-       * 新增
-       */
-      const add = () =>{
-        modalVisible.value = true;
-        doc.value = {
-          ebookId: route.query.ebookId,
-        };
-
-        treeSelectData.value = Tool.copy(level1.value);
         // 为选择树添加一个"无"
         treeSelectData.value.unshift({id: 0, name: '无'});
-        setTimeout(function(){
+        setTimeout(function () {
           editor.create();
         }, 100);
       };
 
       /**
+       * 新增
+       */
+      const add = () => {
+        modalVisible.value = true;
+        doc.value = {
+          ebookId: route.query.ebookId
+        };
+
+        treeSelectData.value = Tool.copy(level1.value);
+
+        // 为选择树添加一个"无"
+        treeSelectData.value.unshift({id: 0, name: '无'});
+        setTimeout(function () {
+          editor.create();
+        }, 100);
+      };
+      /**
        * 删除
        */
       const handleDelete = (id: number) => {
+        // console.log(level1, level1.value, id)
+        // 清空数组，否则多次删除时，数组会一直增加
+        deleteIds.length = 0;
+        deleteNames.length = 0;
         getDeleteIds(level1.value, id);
         Modal.confirm({
           title: '重要提醒',
@@ -298,7 +308,7 @@
             });
           },
         });
-      }
+      };
 
       onMounted(() => {
         handleQuery();
