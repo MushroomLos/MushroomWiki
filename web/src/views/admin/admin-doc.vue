@@ -20,11 +20,13 @@
             </a-form>
           </p>
           <a-table
+                  v-if="level1.length > 0"
                   :columns="columns"
                   :row-key="record => record.id"
                   :data-source="level1"
                   :loading="loading"
                   :pagination="false"
+                  :default-expand-all-rows="true"
                   size="small"
           >
             <template #name="{ text, record }">
@@ -141,6 +143,7 @@
        */
 
       const level1 = ref();
+      level1.value = [];
 
       const handleQuery = () => {
         loading.value = true;
