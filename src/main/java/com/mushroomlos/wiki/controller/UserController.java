@@ -1,11 +1,13 @@
 package com.mushroomlos.wiki.controller;
 
 
+import com.mushroomlos.wiki.req.UserLoginReq;
 import com.mushroomlos.wiki.req.UserQueryReq;
 import com.mushroomlos.wiki.req.UserResetPasswordReq;
 import com.mushroomlos.wiki.req.UserSaveReq;
 import com.mushroomlos.wiki.resp.CommonResp;
 import com.mushroomlos.wiki.resp.PageResp;
+import com.mushroomlos.wiki.resp.UserLoginResp;
 import com.mushroomlos.wiki.resp.UserQueryResp;
 import com.mushroomlos.wiki.service.UserService;
 import org.springframework.util.DigestUtils;
@@ -23,15 +25,15 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/list")
-    public CommonResp list(@Valid UserQueryReq req){
+    public CommonResp list(@Valid UserQueryReq req) {
         CommonResp<PageResp<UserQueryResp>> resp = new CommonResp<>();
-        PageResp<UserQueryResp> list =  userService.list(req);
+        PageResp<UserQueryResp> list = userService.list(req);
         resp.setContent(list);
         return resp;
     }
 
     @PostMapping("/save")
-    public CommonResp save(@Valid @RequestBody UserSaveReq req){
+    public CommonResp save(@Valid @RequestBody UserSaveReq req) {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.save(req);
@@ -39,17 +41,26 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable Long id){
+    public CommonResp delete(@PathVariable Long id) {
         CommonResp resp = new CommonResp<>();
         userService.delete(id);
         return resp;
     }
 
     @PostMapping("/reset-password")
-    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req) {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.resetPassword(req);
+        return resp;
+    }
+
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
         return resp;
     }
 
