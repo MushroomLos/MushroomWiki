@@ -1,10 +1,12 @@
 <template>
     <a-layout-header class="header" id="components-layout-demo-top-side">
         <div class="logo" />
+        <a class="login-menu" @click="showLoginModal">
+            <span>登录</span>
+        </a>
         <a-menu
                 theme="dark"
                 mode="horizontal"
-                v-model:selectedKeys="selectedKeys1"
                 :style="{ lineHeight: '64px' }"
         >
             <a-menu-item key="/">
@@ -22,9 +24,6 @@
             <a-menu-item key="/about">
                 <router-link to="/about">关于我们</router-link>
             </a-menu-item>
-            <a class="login-menu" @click="showLoginModal">
-                <span>登录</span>
-            </a>
         </a-menu>
 
         <a-modal
@@ -47,6 +46,11 @@
 
 <script lang="ts">
     import { defineComponent, ref } from 'vue';
+    import axios from 'axios';
+    import {message} from 'ant-design-vue'
+
+    declare let hexMd5: any;
+    declare let KEY: any;
 
     export default defineComponent({
         name: 'the-header',
@@ -63,7 +67,19 @@
 
             // 登录
             const login = () => {
-                console.log("开始登录")
+                console.log("开始登录");
+                loginModalLoading.value = true;
+                loginUser.value.password = hexMd5(loginUser.value.password + KEY);
+                axios.post('/user/login', loginUser.value).then((response) => {
+                    loginModalLoading.value = false;
+                    const data = response.data;
+                    if (data.success) {
+                        loginModalVisible.value = false;
+                        message.success("登录成功！");
+                    } else {
+                        message.error(data.message);
+                    }
+                });
             };
 
             return {
@@ -78,8 +94,8 @@
 </script>
 
 <style>
-    .login-menu{
-        float: right;
+    .login-menu {
+        float: right !important;
         color: white;
     }
 </style>
