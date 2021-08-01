@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mushroomlos.wiki.domain.User;
 import com.mushroomlos.wiki.domain.UserExample;
+import com.mushroomlos.wiki.exception.BusinessException;
+import com.mushroomlos.wiki.exception.BusinessExceptionCode;
 import com.mushroomlos.wiki.mapper.UserMapper;
 import com.mushroomlos.wiki.req.UserQueryReq;
 import com.mushroomlos.wiki.req.UserSaveReq;
@@ -14,6 +16,7 @@ import com.mushroomlos.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -76,13 +79,19 @@ public class UserService {
     /**
      * 保存
      */
-    public void save(UserSaveReq req){
+    public void save(UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
-        if(ObjectUtils.isEmpty(req.getId())){
-            // 新增
-            user.setId(snowFlake.nextId());
-            userMapper.insert(user);
-        }else{
+        if (ObjectUtils.isEmpty(req.getId())) {
+            User userDB = selectByLoginName(req.getLoginName());
+            if(ObjectUtils.isEmpty(userDB)){
+                // 新增
+                user.setId(snowFlake.nextId());
+                userMapper.insert(user);
+            }else {
+                // 用户名已存在
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        } else {
             // 更新
             userMapper.updateByPrimaryKey(user);
         }
@@ -91,7 +100,19 @@ public class UserService {
     /**
      * 删除
      */
-    public void delete(Long id){
+    public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
+    }
+
+    public User selectByLoginName(String LoginName) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(LoginName);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if(CollectionUtils.isEmpty(userList)){
+            return null;
+        }else{
+            return userList.get(0);
+        }
     }
 }
