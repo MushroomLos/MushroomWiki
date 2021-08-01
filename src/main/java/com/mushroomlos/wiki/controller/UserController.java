@@ -2,6 +2,7 @@ package com.mushroomlos.wiki.controller;
 
 
 import com.mushroomlos.wiki.req.UserQueryReq;
+import com.mushroomlos.wiki.req.UserResetPasswordReq;
 import com.mushroomlos.wiki.req.UserSaveReq;
 import com.mushroomlos.wiki.resp.CommonResp;
 import com.mushroomlos.wiki.resp.PageResp;
@@ -43,4 +44,13 @@ public class UserController {
         userService.delete(id);
         return resp;
     }
+
+    @PostMapping("/reset-password")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp resp = new CommonResp<>();
+        userService.resetPassword(req);
+        return resp;
+    }
+
 }

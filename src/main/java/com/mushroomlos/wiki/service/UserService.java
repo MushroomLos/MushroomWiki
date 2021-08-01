@@ -8,6 +8,7 @@ import com.mushroomlos.wiki.exception.BusinessException;
 import com.mushroomlos.wiki.exception.BusinessExceptionCode;
 import com.mushroomlos.wiki.mapper.UserMapper;
 import com.mushroomlos.wiki.req.UserQueryReq;
+import com.mushroomlos.wiki.req.UserResetPasswordReq;
 import com.mushroomlos.wiki.req.UserSaveReq;
 import com.mushroomlos.wiki.resp.UserQueryResp;
 import com.mushroomlos.wiki.resp.PageResp;
@@ -116,5 +117,13 @@ public class UserService {
         }else{
             return userList.get(0);
         }
+    }
+
+    /**
+     * 重置密码
+     */
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 }
