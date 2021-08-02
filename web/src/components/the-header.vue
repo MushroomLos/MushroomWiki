@@ -1,9 +1,22 @@
 <template>
     <a-layout-header class="header" id="components-layout-demo-top-side">
         <div class="logo" />
+
+        <a-popconfirm
+                title="确认退出登录？"
+                ok-text="是"
+                cancel-text="否"
+                @confirm="logout()"
+        >
+            <a class="login-menu" v-show="user.id">
+                <span>注销</span>
+            </a>
+        </a-popconfirm>
+
         <a class="login-menu" v-show="user.id">
             <span>您好，{{user.name}}</span>
         </a>
+
         <a class="login-menu" v-show="!user.id" @click="showLoginModal">
             <span>登录</span>
         </a>
@@ -91,13 +104,28 @@
                 });
             };
 
+            // 退出登录
+            const logout = () => {
+                console.log("开始注销");
+                axios.get('/user/logout/' + user.value.token).then((response) => {
+                    const data = response.data;
+                    if (data.success) {
+                        message.success("注销成功！");
+                        store.commit("setUser", {});
+                    } else {
+                        message.error(data.message);
+                    }
+                });
+            };
+
             return {
                 loginModalVisible,
                 loginModalLoading,
                 showLoginModal,
                 loginUser,
                 login,
-                user
+                logout,
+                user,
             }
         }
     });
@@ -107,5 +135,6 @@
     .login-menu {
         float: right !important;
         color: white;
+        padding-left: 10px;
     }
 </style>
