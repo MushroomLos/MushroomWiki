@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.mushroomlos.wiki.domain.Content;
 import com.mushroomlos.wiki.domain.Doc;
 import com.mushroomlos.wiki.domain.DocExample;
+import com.mushroomlos.wiki.exception.BusinessException;
+import com.mushroomlos.wiki.exception.BusinessExceptionCode;
 import com.mushroomlos.wiki.mapper.ContentMapper;
 import com.mushroomlos.wiki.mapper.DocMapper;
 import com.mushroomlos.wiki.mapper.DocMapperCust;
@@ -13,6 +15,8 @@ import com.mushroomlos.wiki.req.DocSaveReq;
 import com.mushroomlos.wiki.resp.DocQueryResp;
 import com.mushroomlos.wiki.resp.PageResp;
 import com.mushroomlos.wiki.util.CopyUtil;
+import com.mushroomlos.wiki.util.RedisUtil;
+import com.mushroomlos.wiki.util.RequestContext;
 import com.mushroomlos.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +42,9 @@ public class DocService {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    public RedisUtil redisUtil;
 
     public List<DocQueryResp> all(Long ebookId) {
 
@@ -134,6 +141,11 @@ public class DocService {
     }
 
     public void vote(Long id){
-        docMapperCust.increaseVoteCount(id);
+        String ip = RequestContext.getRemoteAddr();
+        if(redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600 * 24)){
+            docMapperCust.increaseVoteCount(id);
+        }else{
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
     }
 }
