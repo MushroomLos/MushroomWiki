@@ -28,9 +28,9 @@ create  table `ebook`
     `category2_id` bigint comment 'category2',
     `description` varchar(200) comment 'description',
     `cover` varchar(200) comment 'cover',
-    `doc_count` int comment 'dou number',
-    `view_count` int comment 'view number',
-    `vote_count` int comment 'vote number',
+    `doc_count` int not null default 0 comment 'dou number',
+    `view_count` int not null default 0 comment 'view number',
+    `vote_count` int not null default 0 comment 'vote number',
     primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='ebook';
 
