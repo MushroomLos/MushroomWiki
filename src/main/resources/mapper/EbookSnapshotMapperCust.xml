@@ -70,5 +70,4 @@
             t1.`date` asc;
     </select>
 
-
 </mapper>

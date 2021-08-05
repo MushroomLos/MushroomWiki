@@ -1,6 +1,6 @@
 <template>
     <a-layout-header class="header" id="components-layout-demo-top-side">
-        <div class="logo" />
+        <div class="logo">MushroomLos知识库</div>
 
         <a-popconfirm
                 title="确认退出登录？"
@@ -136,5 +136,13 @@
         float: right !important;
         color: white;
         padding-left: 10px;
+    }
+
+    .logo{
+        width: 120px;
+        height: 31px;
+        float: left;
+        color: white;
+        font-size: 18px;
     }
 </style>
