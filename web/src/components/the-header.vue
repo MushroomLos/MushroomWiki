@@ -77,8 +77,8 @@
 
             //登录
             const loginUser = ref({
-                loginName: "test1",
-                password: "test123"
+                loginName: "",
+                password: ""
             });
             const loginModalVisible = ref(false);
             const loginModalLoading = ref(false);
