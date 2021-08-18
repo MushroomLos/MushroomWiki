@@ -89,7 +89,7 @@
         </a-row>
         <br>
         <a-row>
-            <a-col :span="24">
+            <a-col :span="24" id="main-col">
                 <div id="main" style="width: 100%;height:300px;"></div>
             </a-col>
         </a-row>
@@ -112,24 +112,39 @@
                     const data = response.data;
                     if (data.success) {
                         const statisticResp = data.content;
-                        statistic.value.viewCount = statisticResp[1].viewCount;
-                        statistic.value.voteCount = statisticResp[1].voteCount;
-                        statistic.value.todayViewCount = statisticResp[1].viewIncrease;
-                        statistic.value.todayVoteCount = statisticResp[1].voteIncrease;
+                        if(statisticResp.length <= 1){
+                            statistic.value.viewCount = statisticResp[0].viewCount;
+                            statistic.value.voteCount = statisticResp[0].voteCount;
+                            statistic.value.todayViewCount = statisticResp[0].viewIncrease;
+                            statistic.value.todayVoteCount = statisticResp[0].voteIncrease;
+                        }else{
+                            statistic.value.viewCount = statisticResp[1].viewCount;
+                            statistic.value.voteCount = statisticResp[1].voteCount;
+                            statistic.value.todayViewCount = statisticResp[1].viewIncrease;
+                            statistic.value.todayVoteCount = statisticResp[1].voteIncrease;
+                        }
 
                         // 按分钟计算当前时间点，占一天的百分比
                         const now = new Date();
                         const nowRate = (now.getHours() * 60 + now.getMinutes()) / (60 * 24);
                         // console.log(nowRate)
-                        statistic.value.todayViewIncrease = parseInt(String(statisticResp[1].viewIncrease / nowRate));
+                        statistic.value.todayViewIncrease = parseInt(String(statistic.value.todayViewCount / nowRate));
+                        // 判断昨日阅读增长是否为0，围着改为1
+                        const viewIncrease0 = statisticResp[0].viewIncrease === 0 ? 1 : statisticResp[0].viewIncrease;
                         // todayViewIncreaseRate：今日预计增长率
-                        statistic.value.todayViewIncreaseRate = (statistic.value.todayViewIncrease - statisticResp[0].viewIncrease) / statisticResp[0].viewIncrease * 100;
+                        statistic.value.todayViewIncreaseRate = (statistic.value.todayViewIncrease - statisticResp[0].viewIncrease) / viewIncrease0 * 100;
                         statistic.value.todayViewIncreaseRateAbs = Math.abs(statistic.value.todayViewIncreaseRate);
                     }
                 });
             };
 
             const init30DayEcharts = (list: any) => {
+                // 发布生产后出现问题：切到别的页面，再切回首页，报表显示不出来
+                // 解决方法：把原来的id=main的区域清空，重新初始化
+                const mainDom = document.getElementById('main-col');
+                if (mainDom) {
+                    mainDom.innerHTML = '<div id="main" style="width: 100%;height:300px;"></div>';
+                }
                 // 基于准备好的dom，初始化echarts实例
                 const myChart = echarts.init(document.getElementById('main'));
 
@@ -246,3 +261,15 @@
         }
     });
 </script>
+<style scoped>
+    .tip {
+        padding: 10px 5px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        background: linear-gradient(white,white) padding-box,repeating-linear-gradient(-45deg, black 0, black 25%, white 0, white 50%) 0/.6em .6em;
+        animation:ants 12s linear infinite;
+    }
+    .tip b{
+        color: red;
+    }
+</style>
