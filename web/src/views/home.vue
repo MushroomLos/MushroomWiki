@@ -5,12 +5,13 @@
               mode="inline"
               :style="{ height: '100%', borderRight: 0 }"
               @click="handleClick"
+              :openKeys="openKeys"
       >
         <a-menu-item key="welcome">
           <MailOutlined />
           <span>欢迎</span>
         </a-menu-item>
-        <a-sub-menu v-for="item in level1" :key="item.id">
+        <a-sub-menu v-for="item in level1" :key="item.id" :disabled="true">
           <template v-slot:title>
             <span><user-outlined />{{item.name}}</span>
           </template>
@@ -89,6 +90,8 @@ export default defineComponent({
     const ebooks = ref();
     // const ebooks1 = reactive({books: []});
 
+    const openKeys = ref();
+
     const level1 = ref();
     let categorys: any;
 
@@ -98,6 +101,11 @@ export default defineComponent({
         if(data.success){
           categorys = data.content
           console.log("原始数据:", categorys);
+
+          openKeys.value = [];
+          for(let i = 0; i < categorys.length; i++){
+            openKeys.value.push(categorys[i].id);
+          }
 
           level1.value = [];
           level1.value = Tool.array2Tree(categorys, 0);
@@ -162,6 +170,8 @@ export default defineComponent({
       level1,
 
       isShowWelcome,
+
+      openKeys,
     }
   }
 });
