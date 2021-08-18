@@ -1,5 +1,10 @@
 <template>
     <div>
+        <a-alert
+                class="tip"
+                message="小提示：统计数据有一分钟左右延时"
+                type="info"
+        />
         <a-row>
             <a-col :span="24">
                 <a-card>
@@ -271,5 +276,9 @@
     }
     .tip b{
         color: red;
+    }
+
+    .tip {
+        margin-bottom: 20px;
     }
 </style>
